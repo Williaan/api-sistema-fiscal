@@ -15,15 +15,28 @@ const loginUser = async (request, response) => {
     try {
         const usuarioExiste = await connect.query("SELECT * FROM usuarios WHERE email = $1", [email]);
 
-        if (!usuarioExiste.rowCount <= 0) {
+        if (usuarioExiste.rowCount <= 0) {
             return response.status(404).json({ mansagem: "E-mail ou senha estão incorretos." });
         }
 
         const [usuario] = usuarioExiste.rows;
 
-        const compareSenha = await bcrypt.compare(senha, usuario.senha)
+
+        const compareSenha = await bcrypt.compare(senha, usuario.senha);
+
+        if (!compareSenha) {
+            return response.status(404).json({ mansagem: "E-mail ou senha estão incorretos." });
+        }
+
+        const token = jwt.sign({ id: usuario.id }, keySecret, { expiresIn: '8h' })
+
+        const { senha: senha_, ...dadosUsuario } = usuario;
 
 
+        return response.status(200).json({
+            usuario: dadosUsuario,
+            token: token
+        });
 
 
     } catch (error) {
