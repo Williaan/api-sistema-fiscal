@@ -28,7 +28,7 @@ const loginUser = async (request, response) => {
             return response.status(404).json({ mansagem: "E-mail ou senha estão incorretos." });
         }
 
-        const token = jwt.sign({ id: usuario.id }, keySecret, { expiresIn: '8h' })
+        const token = jwt.sign({ id: usuario.id }, keySecret, { expiresIn: '8h' });
 
         const { senha: senha_, ...dadosUsuario } = usuario;
 
