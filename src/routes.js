@@ -1,5 +1,5 @@
 const express = require('express');
-const { createClient } = require('./controllers/clients');
+const { createClient, updateClient } = require('./controllers/clients');
 const { loginUser } = require('./controllers/login');
 const { createUsers, updateUsers, listUsers } = require('./controllers/users');
 const filterAuthentication = require('./middleware/autenticacao');
@@ -13,8 +13,10 @@ router.post('/login', loginUser);
 router.use(filterAuthentication);
 
 router.put('/usuarios/:id', updateUsers);
-router.get('/usuarios', listUsers)
+router.get('/usuarios', listUsers);
+
 router.post('/clientes', createClient);
+router.put('/clientes/:id', updateClient);
 
 
 
