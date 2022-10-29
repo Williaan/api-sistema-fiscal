@@ -16,7 +16,7 @@ const createCobrancas = async (request, response) => {
 
     try {
         const clientExists = await connect.query("SELECT * FROM cobrancas WHERE cliente_id = $1", [cliente_id]);
-        if (clientExists.length === 0) {
+        if (clientExists.rowCount == 0) {
             return response.status(400).json({ mensagem: "Cliente não foi encontrado na base dados!" });
         }
 
