@@ -1,6 +1,20 @@
 const connect = require('../services/connect');
 
 
+const listClients = async (request, response) => {
+
+    try {
+        const listClients = await connect.query("SELECT nome, email, cpf, telefone, status FROM clientes INNSER JOIN cobrancas ON cliente_id = cliente_id");
+
+        return response.status(200).json(listClients.rows);
+
+
+    } catch (error) {
+        return response.status(500).json({ mensagem: `Erro Interno: ${error.message}` });
+    }
+}
+
+
 const createClient = async (request, response) => {
     const { nome, email, cpf, telefone, cep, logradouro, complemento, bairro, cidade, estado } = request.body;
 
@@ -38,13 +52,6 @@ const createClient = async (request, response) => {
     }
 
 }
-
-const listClients = async (request, response) => {
-
-}
-
-
-
 
 
 const updateClient = async (request, response) => {
