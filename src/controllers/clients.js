@@ -39,6 +39,13 @@ const createClient = async (request, response) => {
 
 }
 
+const listClients = async (request, response) => {
+
+}
+
+
+
+
 
 const updateClient = async (request, response) => {
     const { nome, email, cpf, telefone, cep, logradouro, complemento, bairro, cidade, estado } = request.body;
@@ -84,5 +91,6 @@ const updateClient = async (request, response) => {
 
 module.exports = {
     createClient,
-    updateClient
+    updateClient,
+    listClients
 }
