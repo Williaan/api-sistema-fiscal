@@ -19,7 +19,7 @@ router.get('/usuarios', listUsers);
 router.post('/clientes', createClient);
 router.put('/clientes/:id', updateClient);
 
-router.post('/cobrancas/:id', createCobrancas);
+router.post('/cobrancas/', createCobrancas);
 
 
 
