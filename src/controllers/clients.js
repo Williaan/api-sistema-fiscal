@@ -69,7 +69,7 @@ const readClient = async (request, response) => {
 
         const cobrancas = await connect.query("SELECT * FROM cobrancas WHERE cliente_id = $1", [dadosDoCliente.id]);
 
-        const { cliente_id: cliente, ...dadosDaCobranca } = cobrancas.rows[0];
+        const { ...dadosDaCobranca } = cobrancas.rows[0];
 
         return response.status(200).json({
             Cliente: dadosDoCliente,
