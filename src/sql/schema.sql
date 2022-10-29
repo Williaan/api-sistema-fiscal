@@ -25,7 +25,7 @@ create table if not exists cobrancas (
 	id serial primary key,
   	cliente_id integer not null,
   	status varchar(9) not null,
-  	vencimento date not null,
+  	data date not null,
   	foreign key (cliente_id) references clientes (id) 
   	
 );
