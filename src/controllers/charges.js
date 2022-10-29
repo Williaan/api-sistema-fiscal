@@ -25,7 +25,7 @@ const createCobrancas = async (request, response) => {
             return response.status(400).json({ mensagem: "Cobrança não foi cadastrada!" });
         }
 
-        let [cliente] = clientExists.rows;
+        let [cliente] = createCobranca.rows;
 
 
         return response.status(200).json(cliente);
