@@ -18,7 +18,3 @@ const query = (text, param) => {
 module.exports = {
     query: query
 };
-
-
-
-
