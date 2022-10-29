@@ -20,7 +20,7 @@ const createCobrancas = async (request, response) => {
             return response.status(400).json({ mensagem: "Cliente não foi encontrado na base dados!" });
         }
 
-        const createCobranca = await connect.query("INSERT INTO cobrancas (cliente_id, status, vencimento) VALUES ($1, $2, $3)", [cliente_id, status, vencimento]);
+        const createCobranca = await connect.query("INSERT INTO cobrancas (cliente_id, status, data) VALUES ($1, $2, $3)", [cliente_id, status, vencimento]);
         if (createCobranca.rowCount == 0) {
             return response.status(400).json({ mensagem: "Cobrança não foi cadastrada!" });
         }
