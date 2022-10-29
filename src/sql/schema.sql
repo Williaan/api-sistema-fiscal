@@ -1,5 +1,5 @@
-create table clientes(
-	id SERIAL PRIMARY KEY,
+create table if not exists clientes(
+	id serial PRIMARY KEY,
   	nome text not null,
   	cpf text not null,
   	telefone text not null,
@@ -12,7 +12,7 @@ create table clientes(
 );
 
 
-create table usuarios (
+create table if not exists usuarios (
 	id serial primary key,
   	nome text not null,
   	email text not null,
