@@ -69,7 +69,7 @@ const updateUsers = async (request, response) => {
         const usuarioEncontrado = await connect.query("SELECT * FROM usuarios WHERE email = $1", [email]);
 
         if (usuario.rowCount > 0 && usuarioEncontrado.rows[0].id !== usuario.id) {
-            return response.status(400).json("E-mail já existe na base de dados!");
+            return response.status(400).json({ mensagem: "E-mail já existe na base de dados!" });
         }
 
 
@@ -78,7 +78,7 @@ const updateUsers = async (request, response) => {
         const atualizaCadastro = await connect.query("UPDATE usuarios SET nome = $1, email = $2, senha = $3 WHERE id = $4", [nome, email, senhaHash, usuario.id])
 
         if (atualizaCadastro.rowCount <= 0) {
-            return response.status(500).json({ mensagem: `Erro Interno: ${error.message}` });
+            return response.status(400).json({ mensagem: "Usuario não atualizado" });
         }
 
         return response.status(204).send();
