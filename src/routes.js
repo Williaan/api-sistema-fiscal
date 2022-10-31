@@ -1,5 +1,5 @@
 const express = require('express');
-const { createCobrancas } = require('./controllers/charges');
+const { createCobrancas, listCobrancas } = require('./controllers/charges');
 const { createClient, updateClient, listClients, readClient } = require('./controllers/clients');
 const { loginUser } = require('./controllers/login');
 const { createUsers, updateUsers, listUsers } = require('./controllers/users');
@@ -23,6 +23,7 @@ router.put('/clientes/:id', updateClient);
 
 
 router.post('/cobrancas/', createCobrancas);
+router.get('/cobrancas', listCobrancas)
 
 
 
