@@ -16,10 +16,10 @@ const createClient = async (request, response) => {
     }
 
     try {
-        const clientExists = await connect.query("SELECT * FROM clientes WHERE email = $1", [email]);
+        const clientExists = await connect.query("SELECT * FROM clientes WHERE email = $1 OR cpf = $2", [email, cpf]);
 
         if (clientExists.rowCount > 0) {
-            return response.status(400).json({ mensagem: "Cliente ja existe na base de dados!" })
+            return response.status(400).json({ mensagem: "E-mail ou CPF ja existe na base de dados" });
         }
 
         const createClients = "INSERT INTO clientes (nome, email, cpf, telefone, cep, logradouro, complemento, bairro, cidade, estado) VALUES ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *"
@@ -31,6 +31,51 @@ const createClient = async (request, response) => {
         }
 
         return response.status(200).json(query.rows);
+
+
+    } catch (error) {
+        return response.status(500).json({ mensagem: `Erro Interno: ${error.message}` });
+    }
+
+}
+
+
+const listClients = async (request, response) => {
+
+    try {
+        const listClients = await connect.query("SELECT nome, email, cpf, telefone, status FROM clientes INNER JOIN cobrancas ON cliente_id = cliente_id");
+
+        return response.status(200).json(listClients.rows);
+
+
+    } catch (error) {
+        return response.status(500).json({ mensagem: `Erro Interno: ${error.message}` });
+    }
+}
+
+
+const readClient = async (request, response) => {
+    const { id } = request.params;
+
+    try {
+        const clientExists = await connect.query("SELECT * FROM clientes WHERE id = $1", [id]);
+
+        if (clientExists.rowCount == 0) {
+            return response.status(400).json({ mensagem: "Cliente inexistente!" });
+        }
+
+        const { ...dadosDoCliente } = clientExists.rows[0];
+
+
+        const cobrancas = await connect.query("SELECT * FROM cobrancas WHERE cliente_id = $1", [dadosDoCliente.id]);
+
+        const { ...dadosDaCobranca } = cobrancas.rows[0];
+
+        return response.status(200).json({
+            Cliente: dadosDoCliente,
+            Cobrancas: dadosDaCobranca
+
+        });
 
 
     } catch (error) {
@@ -82,7 +127,14 @@ const updateClient = async (request, response) => {
 }
 
 
+
+
 module.exports = {
     createClient,
-    updateClient
+    listClients,
+    readClient,
+    updateClient,
+
 }
+
+
