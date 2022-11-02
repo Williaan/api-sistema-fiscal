@@ -1,5 +1,9 @@
 const express = require('express');
+
 const { createCobrancas, listCobrancas } = require('./controllers/charges');
+
+const { createCobrancas } = require('./controllers/charges');
+
 const { createClient, updateClient, listClients, readClient } = require('./controllers/clients');
 const { loginUser } = require('./controllers/login');
 const { createUsers, updateUsers, listUsers } = require('./controllers/users');

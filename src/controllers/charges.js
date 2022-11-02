@@ -61,4 +61,5 @@ const listCobrancas = async (request, response) => {
 module.exports = {
     createCobrancas,
     listCobrancas
+
 }
