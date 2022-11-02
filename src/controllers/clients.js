@@ -16,10 +16,10 @@ const createClient = async (request, response) => {
     }
 
     try {
-        const clientExists = await connect.query("SELECT * FROM clientes WHERE email = $1", [email]);
+        const clientExists = await connect.query("SELECT * FROM clientes WHERE email = $1 OR cpf = $2", [email, cpf]);
 
         if (clientExists.rowCount > 0) {
-            return response.status(400).json({ mensagem: "Cliente ja existe na base de dados!" })
+            return response.status(400).json({ mensagem: "E-mail ou CPF ja existe na base de dados" });
         }
 
         const createClients = "INSERT INTO clientes (nome, email, cpf, telefone, cep, logradouro, complemento, bairro, cidade, estado) VALUES ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *"
