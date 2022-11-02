@@ -1,7 +1,7 @@
 const connect = require('../services/connect');
 
 const createCobrancas = async (request, response) => {
-    let { cliente_id, status, vencimento } = request.body;
+    let { cliente_id, status, data, descricao, valor } = request.body;
 
     if (!cliente_id) {
         return response.status(400).json({ mensagem: "O campo ID do cliente é obrigatório!" });
@@ -9,8 +9,14 @@ const createCobrancas = async (request, response) => {
     } else if (!status) {
         return response.status(400).json({ mensagem: "O campo Status é obrigatório!" });
 
-    } else if (!vencimento) {
-        return response.status(400).json({ mensagem: "O campo Vencimento é obrigatório!" });
+    } else if (!data) {
+        return response.status(400).json({ mensagem: "O campo data é obrigatório!" });
+
+    } else if (!descricao) {
+        return response.status(400).json({ mensagem: "O campo descrição é obrigatório!" });
+
+    } else if (!valor) {
+        return response.status(400).json({ mensagem: "O campo valor é obrigatório!" });
 
     }
 
@@ -20,7 +26,7 @@ const createCobrancas = async (request, response) => {
             return response.status(400).json({ mensagem: "Cliente não foi encontrado na base dados!" });
         }
 
-        const createCobranca = await connect.query("INSERT INTO cobrancas (cliente_id, status, data) VALUES ($1, $2, $3)", [cliente_id, status, vencimento]);
+        const createCobranca = await connect.query("INSERT INTO cobrancas (cliente_id, status, data, descricao, valor) VALUES ($1, $2, $3, $4, $5) RETURNING *", [cliente_id, status, data, descricao, valor]);
         if (createCobranca.rowCount == 0) {
             return response.status(400).json({ mensagem: "Cobrança não foi cadastrada!" });
         }
@@ -37,6 +43,22 @@ const createCobrancas = async (request, response) => {
 }
 
 
+const listCobrancas = async (request, response) => {
+
+    try {
+        const listCobranca = await connect.query("SELECT nome, cliente_id, status, data, descricao, valor FROM cobrancas INNER JOIN clientes ON cliente_id = cliente_id");
+
+        return response.status(200).json(listCobranca.rows);
+
+
+
+    } catch (error) {
+
+        return response.status(500).json({ mensagem: `Erro interno: ${error.message}` });
+    }
+}
+
 module.exports = {
-    createCobrancas
+    createCobrancas,
+    listCobrancas
 }
