@@ -128,7 +128,6 @@ const updateClient = async (request, response) => {
 
 
 
-
 module.exports = {
     createClient,
     listClients,
