@@ -1,21 +1,13 @@
 const connect = require('../services/connect');
+const { validateAddClients } = require('../tools/validacao');
 
 
 const createClient = async (request, response) => {
     const { nome, email, cpf, telefone, cep, logradouro, complemento, bairro, cidade, estado } = request.body;
 
-    if (!nome) {
-        return response.status(400).json({ mensagem: "O campo Nome é obrigatório!" });
-
-    } else if (!email) {
-        return response.status(400).json({ mensagem: "O campo E-mail é obrigatório!" });
-
-    } else if (!cpf) {
-        return response.status(400).json({ mensagem: "O campo Senha é obrigatório!" });
-
-    }
-
     try {
+        await validateAddClients.validate(request.body);
+
         const clientExists = await connect.query("SELECT * FROM clientes WHERE email = $1 OR cpf = $2", [email, cpf]);
 
         if (clientExists.rowCount > 0) {
@@ -89,19 +81,9 @@ const updateClient = async (request, response) => {
     const { nome, email, cpf, telefone, cep, logradouro, complemento, bairro, cidade, estado } = request.body;
     const { id } = request.params;
 
-
-    if (!nome) {
-        return response.status(400).json({ mensagem: "O campo Nome é obrigatório!" });
-
-    } else if (!email) {
-        return response.status(400).json({ mensagem: "O campo E-mail é obrigatório!" });
-
-    } else if (!cpf) {
-        return response.status(400).json({ mensagem: "O campo Senha é obrigatório!" });
-
-    }
-
     try {
+        await validateAddClients.validate(request.body);
+
         const clientExists = await connect.query("SELECT * FROM clientes WHERE email = $1 OR cpf = $2", [email, cpf]);
 
         if (clientExists.rowCount > 0) {
