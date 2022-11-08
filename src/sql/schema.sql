@@ -9,7 +9,6 @@ create table if not exists usuarios (
 );
 
 
-
 create table if not exists clientes(
 	id serial PRIMARY KEY,
   	nome text not null,
