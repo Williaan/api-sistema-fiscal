@@ -1,26 +1,12 @@
 const connect = require('../services/connect');
+const { validateAddCharges } = require('../tools/validacao');
 
 const createCobrancas = async (request, response) => {
     let { cliente_id, status, data, descricao, valor } = request.body;
 
-    if (!cliente_id) {
-        return response.status(400).json({ mensagem: "O campo ID do cliente é obrigatório!" });
-
-    } else if (!status) {
-        return response.status(400).json({ mensagem: "O campo Status é obrigatório!" });
-
-    } else if (!data) {
-        return response.status(400).json({ mensagem: "O campo data é obrigatório!" });
-
-    } else if (!descricao) {
-        return response.status(400).json({ mensagem: "O campo descrição é obrigatório!" });
-
-    } else if (!valor) {
-        return response.status(400).json({ mensagem: "O campo valor é obrigatório!" });
-
-    }
-
     try {
+        await validateAddCharges.validate(request.body);
+
         const clientExists = await connect.query("SELECT * FROM cobrancas WHERE cliente_id = $1", [cliente_id]);
         if (clientExists.length === 0) {
             return response.status(400).json({ mensagem: "Cliente não foi encontrado na base dados!" });
@@ -34,7 +20,7 @@ const createCobrancas = async (request, response) => {
         let [cliente] = createCobranca.rows;
 
 
-        return response.status(200).json(cliente);
+        return response.status(200).json();
 
     } catch (error) {
         return response.status(500).json({ mensagem: `Erro interno: ${error.message}` });
@@ -50,8 +36,6 @@ const listCobrancas = async (request, response) => {
 
         return response.status(200).json(listCobranca.rows);
 
-
-
     } catch (error) {
         return response.status(500).json({ mensagem: `Erro interno: ${error.message}` });
     }
@@ -59,33 +43,19 @@ const listCobrancas = async (request, response) => {
 
 
 const updateCobrancas = async (request, response) => {
-    let { cliente_id, status, data, descricao, valor } = request.body;
     const { id } = request.params;
-
-    if (!cliente_id) {
-        return response.status(400).json({ mensagem: "O campo ID do cliente é obrigatório!" });
-
-    } else if (!status) {
-        return response.status(400).json({ mensagem: "O campo Status é obrigatório!" });
-
-    } else if (!data) {
-        return response.status(400).json({ mensagem: "O campo data é obrigatório!" });
-
-    } else if (!descricao) {
-        return response.status(400).json({ mensagem: "O campo descrição é obrigatório!" });
-
-    } else if (!valor) {
-        return response.status(400).json({ mensagem: "O campo valor é obrigatório!" });
-
-    }
+    let { status, data, descricao, valor } = request.body;
 
     try {
-        const clientExists = await connect.query("SELECT * FROM cobrancas WHERE cliente_id = $1", [id]);
+        await validateAddCharges.validate(request.body);
+
+        const clientExists = await connect.query("SELECT * FROM cobrancas WHERE id = $1", [id]);
+
         if (clientExists.rowCount == 0) {
-            return response.status(400).json({ mensagem: "Cliente não foi encontrado na base dados!" });
+            return response.status(400).json({ mensagem: "Cobranças não foi encontrado na base dados!" });
         }
 
-        const updateCobranca = await connect.query("UPDATE cobrancas SET status = $1, data = $2, descricao = $3, valor = $4 WHERE cliente_id = $5", [status, data, descricao, valor, cliente_id])
+        const updateCobranca = await connect.query("UPDATE cobrancas SET status = $1, data = $2, descricao = $3, valor = $4 WHERE id = $5 RETURNING *", [status, data, descricao, valor, id])
 
         if (updateCobranca.rowCount == 0) {
             return response.status(400).json({ mensagem: "Cobrança não foi atualizada!" });
@@ -112,29 +82,31 @@ const detailCobrancas = async (request, response) => {
             return response.status(400).json({ mensagem: "Cliente não foi encontrado na base dados!" });
         }
 
-        const detailCobranca = await connect.query("SELECT * FROM cobrancas");
+        const detailCobranca = await connect.query("SELECT * FROM cobrancas WHERE cliente_id = $1", [id]);
 
-        return response.status(200).json(detailCobranca.rows[0]);
+        return response.status(200).json(detailCobranca.rows);
 
     } catch (error) {
         return response.status(500).json({ mensagem: `Erro interno: ${error.message}` });
     }
 }
 
+
 const deleteCobrancas = async (request, response) => {
     const { id } = request.params;
 
     try {
-        const clientExists = await connect.query("SELECT * FROM cobrancas WHERE cliente_id = $1", [id]);
+        const clientExists = await connect.query("SELECT * FROM cobrancas WHERE id = $1", [id]);
         if (clientExists.rowCount == 0) {
-            return response.status(400).json({ mensagem: "Cliente não foi encontrado na base dados!" });
+            return response.status(400).json({ mensagem: "Cobrança não foi encontrado na base dados!" });
         }
 
-        const deleteCobranca = connect.query("DELETE FROM cobrancas WHERE cliente_id = $1", [id]);
+        const deleteCobranca = connect.query("DELETE FROM cobrancas WHERE id = $1", [id]);
 
         if (deleteCobranca == 0) {
-            return response.status(400).json({ mensagem: "Cobrança não deletada" })
+            return response.status(400).json({ mensagem: "Cobrança não encontarda" })
         }
+
 
         return response.status(200).json('Excluído com sucesso!');
 

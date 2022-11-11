@@ -1,25 +1,15 @@
 const connect = require('../services/connect');
 const bcrypt = require('bcrypt');
+const { validateAddUsers } = require('../tools/validacao');
+
 
 
 const createUsers = async (request, response) => {
     const { nome, email, senha } = request.body;
 
-    if (!nome) {
-        return response.status(400).json({ mensagem: "O campo Nome é obrigatório!" });
-
-    } else if (!email) {
-        return response.status(400).json({ mensagem: "O campo E-mail é obrigatório!" });
-
-    } else if (!senha) {
-        return response.status(400).json({ mensagem: "O campo Senha é obrigatório!" });
-
-    } else if (senha.length < 6) {
-        return response.status(400).json({ mensagem: "A senha precisa ser maior ou igual a 6 caracteres!" });
-    }
-
-
     try {
+        await validateAddUsers.validate(request.body);
+
         const existeEmail = await connect.query("SELECT * FROM usuarios WHERE email = $1", [email]);
 
         if (existeEmail.rowCount > 0) {
@@ -51,21 +41,9 @@ const updateUsers = async (request, response) => {
     const { nome, email, senha } = request.body;
     const { usuario } = request;
 
-    if (!nome) {
-        return response.status(400).json({ mensagem: "O campo Nome é obrigatório!" });
-
-    } else if (!email) {
-        return response.status(400).json({ mensagem: "O campo E-mail é obrigatório!" });
-
-    } else if (!senha) {
-        return response.status(400).json({ mensagem: "O campo Senha é obrigatório!" });
-
-    } else if (senha.length < 6) {
-        return response.status(400).json({ mensagem: "A senha precisa ser maior ou igual a 6 caracteres!" });
-    }
-
-
     try {
+        await validateAddUsers.validate(request.body);
+
         const usuarioEncontrado = await connect.query("SELECT * FROM usuarios WHERE email = $1", [email]);
 
         if (usuario.rowCount > 0 && usuarioEncontrado.rows[0].id !== usuario.id) {
