@@ -4,6 +4,14 @@ const { setLocale } = require('yup');
 setLocale(pt);
 
 
+const validateAddUsers = yup.object().shape({
+    nome: yup.string().required("O campo Nome é obrigatório!"),
+    email: yup.string().email().required("O campo E-mail é obrigatório!"),
+    senha: yup.string().required("O campo Senha é obrigatório!").min(6)
+
+});
+
+
 const validateAddClients = yup.object().shape({
     nome: yup.string().required("O campo Nome é obrigatório!"),
     email: yup.string().email().required("O campo E-mail é obrigatório!"),
@@ -13,18 +21,10 @@ const validateAddClients = yup.object().shape({
 });
 
 
-const validateAddUsers = yup.object().shape({
-    nome: yup.string().required("O campo Nome é obrigatório!"),
-    email: yup.string().email().required("O campo E-mail é obrigatório!"),
-    senha: yup.string().required("O campo Senha é obrigatório!").min(6)
-
-});
-
-
 const validateAddCharges = yup.object().shape({
     cliente_id: yup.number().strict().required("O campo ID do cliente é obrigatório!"),
     status: yup.string().required("O campo Status é obrigatório!"),
-    data: yup.string().required("O campo Data é obrigatório!").min(10),
+    data: yup.date().required("O campo Data é obrigatório!"),
     descricao: yup.string().required("O campo Descrição é obrigatório"),
     valor: yup.number().strict().required("O campo Valor é obrigatório")
 

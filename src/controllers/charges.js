@@ -36,8 +36,6 @@ const listCobrancas = async (request, response) => {
 
         return response.status(200).json(listCobranca.rows);
 
-
-
     } catch (error) {
         return response.status(500).json({ mensagem: `Erro interno: ${error.message}` });
     }
@@ -46,17 +44,18 @@ const listCobrancas = async (request, response) => {
 
 const updateCobrancas = async (request, response) => {
     const { id } = request.params;
-    let { cliente_id, status, data, descricao, valor } = request.body;
+    let { status, data, descricao, valor } = request.body;
 
     try {
         await validateAddCharges.validate(request.body);
 
         const clientExists = await connect.query("SELECT * FROM cobrancas WHERE id = $1", [id]);
+
         if (clientExists.rowCount == 0) {
-            return response.status(400).json({ mensagem: "Cliente não foi encontrado na base dados!" });
+            return response.status(400).json({ mensagem: "Cobranças não foi encontrado na base dados!" });
         }
 
-        const updateCobranca = await connect.query("UPDATE cobrancas SET status = $1, data = $2, descricao = $3, valor = $4 WHERE id = $5 RETURNING *", [status, data, descricao, valor, cliente_id, id])
+        const updateCobranca = await connect.query("UPDATE cobrancas SET status = $1, data = $2, descricao = $3, valor = $4 WHERE id = $5 RETURNING *", [status, data, descricao, valor, id])
 
         if (updateCobranca.rowCount == 0) {
             return response.status(400).json({ mensagem: "Cobrança não foi atualizada!" });
@@ -97,16 +96,17 @@ const deleteCobrancas = async (request, response) => {
     const { id } = request.params;
 
     try {
-        const clientExists = await connect.query("SELECT * FROM cobrancas WHERE cliente_id = $1", [id]);
+        const clientExists = await connect.query("SELECT * FROM cobrancas WHERE id = $1", [id]);
         if (clientExists.rowCount == 0) {
-            return response.status(400).json({ mensagem: "Cliente não foi encontrado na base dados!" });
+            return response.status(400).json({ mensagem: "Cobrança não foi encontrado na base dados!" });
         }
 
-        const deleteCobranca = connect.query("DELETE FROM cobrancas WHERE cliente_id = $1", [id]);
+        const deleteCobranca = connect.query("DELETE FROM cobrancas WHERE id = $1", [id]);
 
         if (deleteCobranca == 0) {
             return response.status(400).json({ mensagem: "Cobrança não encontarda" })
         }
+
 
         return response.status(200).json('Excluído com sucesso!');
 
